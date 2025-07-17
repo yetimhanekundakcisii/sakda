@@ -136,6 +136,18 @@ function getBotResponse(message) {
         openSevgiKucukPage();
         return "Sevgi Küçük sayfası yeni sekmede açılıyor...";
     }
+    // Roblox linki
+    if (msg.includes("roblox")) {
+        window.open('https://reemans.github.io/simple-js/', '_blank');
+        return "Roblox linki yeni sekmede açılıyor...";
+    }
+    // ...existing code...
+    if (msg.includes("saat") || msg.includes("zaman") || (msg.includes("kaç") && msg.includes("saat"))) {
+        return pick(responses.time)();
+    } else if (msg.includes("tarih") || msg.includes("bugün") || msg.includes("günlerden")) {
+        return pick(responses.date)();
+    }
+    // ...existing code...
     if (msg.includes("saat") || msg.includes("zaman") || (msg.includes("kaç") && msg.includes("saat"))) {
         return pick(responses.time)();
     } else if (msg.includes("tarih") || msg.includes("bugün") || msg.includes("günlerden")) {
