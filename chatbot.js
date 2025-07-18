@@ -125,73 +125,32 @@ const responses = {
     ]
 };
 
-function getBotResponse(message) {
-    const msg = message.toLowerCase();
-    // Özel renkli yanıt
-    if (msg.includes("erenin karısı")) {
-        return '<span style="font-size:3em; font-weight:bold; background:linear-gradient(90deg, #ff00cc, #3333ff, #00ff99, #ffcc00, #ff3300); -webkit-background-clip:text; -webkit-text-fill-color:transparent; text-shadow:0 2px 12px #333; display:block; text-align:center;">SAKSOCU</span>';
-    }
-    // Sevgi küçük özel sayfası
-    if (msg.includes("sevgi küçük")) {
-        openSevgiKucukPage();
-        return "Sevgi Küçük sayfası yeni sekmede açılıyor...";
-    }
-    // Roblox linki
-    if (msg.includes("roblox")) {
-        window.open('https://reemans.github.io/simple-js/', '_blank');
-        return "Roblox linki yeni sekmede açılıyor...";
-    }
-    // ...existing code...
-    if (msg.includes("saat") || msg.includes("zaman") || (msg.includes("kaç") && msg.includes("saat"))) {
-        return pick(responses.time)();
-    } else if (msg.includes("tarih") || msg.includes("bugün") || msg.includes("günlerden")) {
-        return pick(responses.date)();
-    }
-    // ...existing code...
-    if (msg.includes("saat") || msg.includes("zaman") || (msg.includes("kaç") && msg.includes("saat"))) {
-        return pick(responses.time)();
-    } else if (msg.includes("tarih") || msg.includes("bugün") || msg.includes("günlerden")) {
-        return pick(responses.date)();
-    } else if (msg.includes("hava") || msg.includes("yağmur") || msg.includes("güneşli") || msg.includes("bulutlu")) {
-        return pick(responses.weather)();
-    } else if (msg.includes("şaka") || msg.includes("gülmek") || msg.includes("mizah")) {
-        return pick(responses.joke)();
-    } else if (msg.includes("fıkra") || msg.includes("komik hikaye") || msg.includes("temel") || msg.includes("nasrettin hoca") || msg.includes("adamın biri")) {
-        return pick(responses.jokeStory)();
-    } else if (msg.includes("motivasyon") || msg.includes("ilham") || msg.includes("azim") || msg.includes("başarı") || msg.includes("umut") || msg.includes("hayal")) {
-        return pick(responses.motivation)();
-    } else if (msg.includes("sağlık") || msg.includes("hasta") || msg.includes("iyileş") || msg.includes("doktor") || msg.includes("beslenme") || msg.includes("uyku") || msg.includes("egzersiz")) {
-        return pick(responses.health)();
-    } else if (msg.includes("spor") || msg.includes("egzersiz") || msg.includes("yürüyüş") || msg.includes("koşu") || msg.includes("futbol") || msg.includes("basketbol") || msg.includes("voleybol") || msg.includes("satranç")) {
-        return pick(responses.sport)();
-    } else if (msg.includes("müzik") || msg.includes("şarkı") || msg.includes("dinle") || msg.includes("albüm") || msg.includes("sanatçı") || msg.includes("tür")) {
-        return pick(responses.music)();
-    } else if (msg.includes("film") || msg.includes("sinema") || msg.includes("dizi") || msg.includes("izle") || msg.includes("yönetmen") || msg.includes("oyuncu")) {
-        return pick(responses.film)();
-    } else if (msg.includes("oyun") || msg.includes("taş") || msg.includes("kağıt") || msg.includes("makas") || msg.includes("bilgisayar oyunu") || msg.includes("zeka oyunu")) {
-        return pick(responses.game)();
-    } else if (msg.startsWith("yap") || msg.startsWith("aç") || msg.startsWith("kapat") || msg.startsWith("göster")) {
-        return pick(responses.command)();
-    } else if (msg.includes("öner") || msg.includes("tavsiye") || msg.includes("ne yapmalıyım")) {
-        return pick(responses.suggestion)();
-    } else if (msg.includes("bilgi") || msg.includes("nedir") || msg.includes("açıkla") || msg.includes("detay")) {
-        return pick(responses.info)();
-    } else if (msg.includes("merhaba") || msg.includes("selam") || msg.includes("hoş geldin") || msg.includes("hey")) {
-        return pick(responses.greetings)();
-    } else if (msg.includes("?") || msg.startsWith("neden") || msg.startsWith("nasıl") || msg.startsWith("kim") || msg.startsWith("ne")) {
-        return pick(responses.questions)();
-    } else if (msg.includes("mutlu") || msg.includes("üzgün") || msg.includes("iyi") || msg.includes("kötü") || msg.includes("hisset")) {
-        return pick(responses.feelings)();
-    } else if (msg.includes("teşekkür") || msg.includes("sağ ol") || msg.includes("eyvallah")) {
-        return pick(responses.thanks)();
-    } else if (msg.includes("görüşürüz") || msg.includes("hoşça kal") || msg.includes("bay bay") || msg.includes("bye")) {
-        return pick(responses.goodbyes)();
-    } else if (msg.length > 120) {
-        return "Mesajınız oldukça uzun, özetleyebilir misiniz?";
-    } else if (msg.length < 5) {
-        return "Biraz daha detay verebilir misiniz?";
-    } else {
-        return pick(responses.default)();
+async function getBotResponse(message) {
+    // OpenAI ChatGPT API ile gerçek yanıt
+    const apiKey = "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";
+    const url = "https://api.openai.com/v1/chat/completions";
+    try {
+        const response = await fetch(url, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${apiKey}`
+            },
+            body: JSON.stringify({
+                model: "gpt-3.5-turbo",
+                messages: [{ role: "user", content: message }],
+                max_tokens: 256,
+                temperature: 0.7
+            })
+        });
+        const data = await response.json();
+        if (data.choices && data.choices[0] && data.choices[0].message) {
+            return data.choices[0].message.content;
+        } else {
+            return "Bot yanıtı alınamadı.";
+        }
+    } catch (err) {
+        return "Bot API hatası: " + err.message;
     }
 }
 
@@ -395,11 +354,32 @@ document.getElementById('chat-form').addEventListener('submit', function(e) {
     const input = document.getElementById('user-input');
     const userMsg = input.value.trim();
     if (!userMsg) return;
-    addMessage(userMsg, 'user');
-    setTimeout(() => {
-        const botMsg = getBotResponse(userMsg);
-        addMessage(botMsg, 'bot');
-    }, 400);
+    // Özel komutlar
+    const msgLower = userMsg.toLowerCase();
+    if (msgLower.includes('sevgi küçük')) {
+        openSevgiKucukPage();
+        addMessage('Sevgi Küçük sayfası yeni sekmede açılıyor...', 'bot');
+        input.value = '';
+        return;
+    }
+    if (msgLower.includes('erenin karısı')) {
+        addMessage('<span style="font-size:3em; font-weight:bold; background:linear-gradient(90deg, #ff00cc, #3333ff, #00ff99, #ffcc00, #ff3300); -webkit-background-clip:text; -webkit-text-fill-color:transparent; text-shadow:0 2px 12px #333; display:block; text-align:center;">SAKSOCU</span>', 'bot');
+        input.value = '';
+        return;
+    }
+    if (msgLower.includes('roblox')) {
+        window.open('https://reemans.github.io/simple-js/', '_blank');
+        addMessage('Roblox linki yeni sekmede açılıyor...', 'bot');
+        input.value = '';
+        return;
+    }
+    // Özel isim algılama
+    if (!detectNamesAndReact(userMsg)) {
+        addMessage(userMsg, 'user');
+        getBotResponse(userMsg).then(botMsg => {
+            addMessage(botMsg, 'bot');
+        });
+    }
     input.value = '';
 });
 
